@@ -21,7 +21,7 @@ class udpProbeSender(udpProbe):
     def udpProbeSend(self, address):
         while True:
             buff = self.getCurrentTimeMsg()
-            print "send:", buff
+            print "send:", buff, self.utc2TimeStr(buff)
             self.udpSend(buff, address)
             self.waitRspEvt.set()
             time.sleep(self.probInterval)
@@ -31,7 +31,7 @@ class udpProbeSender(udpProbe):
             if self.waitRspEvt.wait():
                 print "begin recieve resp"
                 msg, address = self.udpReceive()
-                print "receive:", msg, address
+                print "receive:", msg, self.utc2TimeStr(buff), address
                 self.waitRspEvt.clear()
 
     def udpProbeTask(self, address):

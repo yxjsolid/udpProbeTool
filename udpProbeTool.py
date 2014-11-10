@@ -27,7 +27,7 @@ class udpProbe():
         except Exception, e:
             return None, None
 
-    def getCurrentTimeMsg(self):
+    def getCurrentTimeMsg1(self):
         localTime =  time.localtime()
         H = localTime.tm_hour
         M =  localTime.tm_min
@@ -36,3 +36,23 @@ class udpProbe():
         MS = (tt - int(tt))*100
         tmStr = "%02d:%02d:%02d.%02d"%(H, M, S, MS)
         return tmStr
+
+    def getCurrentTimeMsg(self):
+        tmStr = "%.2f"%(time.time())
+        return tmStr
+
+    def utc2TimeStr(self, utcStr):
+        utc = float(utcStr)
+        tmStruct = time.localtime(utc)
+        H = tmStruct.tm_hour
+        M =  tmStruct.tm_min
+        S = tmStruct.tm_sec
+        MS = (utc - int(utc))*100
+        tmStr = "%02d:%02d:%02d.%02d"%(H, M, S, MS)
+        return tmStr
+
+if __name__ == "__main__":
+
+    #tt = time.time()
+    #print time.gmtime(float(tmStr))
+    pass
