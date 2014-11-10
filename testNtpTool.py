@@ -29,7 +29,7 @@ if __name__ == "__main__":
         server1 = "ntp1.aliyun.com"
         tm1, delay1 = getTimeFromNtpServer(server1)
 
-        time.sleep(100)
+        time.sleep(1000)
         tm2, delay2= getTimeFromNtpServer(server1)
 
         print tm2 - tm1 - delay2
