@@ -74,10 +74,17 @@ if __name__ == "__main__":
     host = "10.103.12.21"
 
     serverList = [
-        ("182.254.210.23","qcloud"),
-        ("115.29.210.164","Server_2"),
-        ("121.40.213.94","Server_3"),
-    ]
+        ("182.254.210.23",  "qcloud"),
+        ("115.29.210.164",  "Server_2"),
+        ("121.40.213.94",   "Server_3"),
+        ("121.40.213.66",   "server_4"),
+        ("121.41.24.35",    "server_5"),
+        ("121.40.214.109",  "server_6"),
+        ("121.40.213.68",   "server_7"),
+        ("121.40.213.133",  "server_8"),
+        ("121.41.24.56",    "server_9"),
+
+        ]
     for target in serverList:
         probe = udpProbeSender(host, target)
         probe.udpProbeTask()
