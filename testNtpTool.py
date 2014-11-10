@@ -25,11 +25,14 @@ if __name__ == "__main__":
     tm2 = 0
     delay2 = 0
 
+    interval = 1000
+    print "interval:", interval
+
     while True:
         server1 = "ntp1.aliyun.com"
         tm1, delay1 = getTimeFromNtpServer(server1)
 
-        time.sleep(1000)
+        time.sleep(interval)
         tm2, delay2= getTimeFromNtpServer(server1)
 
         print tm2 - tm1 - delay2
