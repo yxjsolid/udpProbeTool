@@ -7,6 +7,7 @@ class udpProbe():
         self.probInterval = 5
         self.udpSocket = None
         self.initUdpSocket(host)
+        self.lastProbeTime = None
         pass
 
     def initUdpSocket(self, host):
@@ -21,7 +22,7 @@ class udpProbe():
 
     def udoProbeSend(self, address):
         while True:
-            buff = self.getTimestamp()
+            buff = self.getCurrentTimeMsg()
             self.udpSend(buff, address)
             time.sleep(self.probInterval)
         pass
@@ -29,27 +30,38 @@ class udpProbe():
     def udpSend(self, buff, address):
         self.udpSock.sendto(buff, address)
 
+    def udpProbeResponse(self, receive, address):
+        current = self.getCurrentTimeMsg()
+        resp = receive + " " + current
+        self.udpSend(resp, address)
+
+        msg, address = self.udpReceive()
+
+        print "receive:", msg
 
     def udpReceiveProbe(self):
         while True:
-            self.udpReceive()
+            msg, address = self.udpReceive()
 
+            if self.lastProbeTime:
+                print "interval:", time.time() - self.lastProbeTime
+            self.lastProbeTime = time.time()
+            self.udpProbeResponse(msg, address)
 
     def udpReceive(self):
         msg, address = self.udpSock.recvfrom(1024)
         print address
         print msg
+        return msg, address
 
-    def getTimestamp(self):
+    def getCurrentTimeMsg(self):
         localTime =  time.localtime()
         H = localTime.tm_hour
         M =  localTime.tm_min
         S = localTime.tm_sec
         tt =  time.time()
         MS = (tt - int(tt))*100
-
         tmStr = "%02d:%02d:%02d.%02d"%(H, M, S, MS)
-        print tmStr
         return tmStr
 
 if __name__ == "__main__":
@@ -57,18 +69,13 @@ if __name__ == "__main__":
 
     tt =  time.time()
     print tt
-    delay = 10 - tt%10
+    delay = 10 - tt%10 + 0.1
 
     time.sleep(delay)
     #print 10 - tt%10
     print time.time()
 
-
-
-
     probe = udpProbe(host)
-    probe.getTimestamp()
-
     probe.udoProbeSend(("10.103.12.21", 4096))
 
     #probe.udpReceive()
