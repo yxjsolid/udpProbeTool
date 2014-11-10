@@ -37,7 +37,19 @@ class udpProbeReceiver(udpProbe):
         else:
             interval = 0
 
-        log = "receive:%s, local:%s, interval:%.2f"%(msg, self.getCurrentTimeMsg(), interval)
+        receiveTm = self.utc2TimeStr(msg)
+        localTm = self.utc2TimeStr(self.getCurrentTimeMsg())
+
+        receiveUtc = float(msg)
+        localUtc = time.time()
+
+        if localUtc > receiveUtc:
+            diff = "+%.2f"%(localUtc - receiveUtc)
+        else:
+            diff = "-%.2f"%(receiveUtc - localUtc)
+
+
+        log = "receive:%s, local:%s, diff:%s interval:%.2f"%(receiveTm, localTm, diff, interval)
         print log
 
 
