@@ -13,6 +13,7 @@ class udpProbe():
     def initUdpSocket(self, host):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
         s.bind((host, self.PORT))
         self.udpSock = s
 
@@ -23,8 +24,14 @@ class udpProbe():
     def udoProbeSend(self, address):
         while True:
             buff = self.getCurrentTimeMsg()
+            print "send:", buff
             self.udpSend(buff, address)
+
+
+            msg, addressa = self.udpReceive()
+            print "receive:", msg
             time.sleep(self.probInterval)
+
         pass
 
     def udpSend(self, buff, address):
@@ -35,9 +42,7 @@ class udpProbe():
         resp = receive + " " + current
         self.udpSend(resp, address)
 
-        msg, address = self.udpReceive()
 
-        print "receive:", msg
 
     def udpReceiveProbe(self):
         while True:
@@ -49,10 +54,12 @@ class udpProbe():
             self.udpProbeResponse(msg, address)
 
     def udpReceive(self):
-        msg, address = self.udpSock.recvfrom(1024)
-        print address
-        print msg
-        return msg, address
+        try:
+            msg, address = self.udpSock.recvfrom(1024)
+            return msg, address
+        except Exception, e:
+            print "timeout"
+            return None, None
 
     def getCurrentTimeMsg(self):
         localTime =  time.localtime()
