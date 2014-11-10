@@ -8,31 +8,33 @@ class udpProbe():
         self.udpSocket = None
         self.initUdpSocket(host)
         self.lastProbeTime = None
+        self.waitRspEvt = threading.Event()
         pass
 
     def initUdpSocket(self, host):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.settimeout(1)
-        s.bind((host, self.PORT))
+        #s.bind((host, self.PORT))
         self.udpSock = s
 
     def __runTask(self, func, arg):
         tsk = threading.Thread(target=func, args=arg)
         tsk.start()
 
-    def udoProbeSend(self, address):
+    def udpProbeSend(self, address):
         while True:
             buff = self.getCurrentTimeMsg()
             print "send:", buff
             self.udpSend(buff, address)
-
-
-            msg, addressa = self.udpReceive()
-            print "receive:", msg
+            self.waitRspEvt.set()
             time.sleep(self.probInterval)
-
         pass
+
+
+    def udpProbeTask(self, address):
+        self.__runTask(self.udpProbeSend, (address,))
+        self.__runTask(self.updReceiveResponse, ())
 
     def udpSend(self, buff, address):
         self.udpSock.sendto(buff, address)
@@ -42,12 +44,18 @@ class udpProbe():
         resp = receive + " " + current
         self.udpSend(resp, address)
 
+    def updReceiveResponse(self):
+        while True:
+            if self.waitRspEvt.wait():
+                print "begin recieve resp"
+                msg, address = self.udpReceive()
+                print "receive:", msg, address
+                self.waitRspEvt.clear()
 
 
     def udpReceiveProbe(self):
         while True:
             msg, address = self.udpReceive()
-
             if self.lastProbeTime:
                 print "interval:", time.time() - self.lastProbeTime
             self.lastProbeTime = time.time()
@@ -78,11 +86,10 @@ if __name__ == "__main__":
     print tt
     delay = 10 - tt%10 + 0.1
 
-    time.sleep(delay)
-    #print 10 - tt%10
+    #time.sleep(delay)
     print time.time()
 
     probe = udpProbe(host)
-    probe.udoProbeSend(("10.103.12.21", 4096))
+    probe.udpProbeTask(("10.103.12.21", 4096))
 
     #probe.udpReceive()
