@@ -27,15 +27,22 @@ class udpProbeReceiver(udpProbe):
     def udpReceiveProbe(self):
         while True:
             msg, address = self.udpReceive()
-            if self.lastProbeTime:
-                print "interval:", time.time() - self.lastProbeTime
+            self.doLog(msg)
             self.lastProbeTime = time.time()
             self.udpProbeResponse(msg, address)
 
+    def doLog(self, msg):
+        if self.lastProbeTime:
+            interval = time.time() - self.lastProbeTime
+        else:
+            interval = 0
+
+        log = "receive:%s, local:%s, interval:%.2f"%(msg, self.getCurrentTimeMsg(), interval)
+        print log
 
 
 if __name__ == "__main__":
-    host = "10.103.12.150"
+    host = "0.0.0.0"
     print time.time()
     probe = udpProbeReceiver(host)
-    probe.udpReceiveProbe(("10.103.12.21", 4096))
+    probe.udpReceiveProbe()
