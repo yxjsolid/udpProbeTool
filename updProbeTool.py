@@ -4,6 +4,7 @@ import time, os, socket, threading
 class udpProbe():
     def __init__(self, host):
         self.PORT = 4096
+        self.probInterval = 5
         self.udpSocket = None
         self.initUdpSocket(host)
         pass
@@ -19,12 +20,20 @@ class udpProbe():
         tsk.start()
 
     def udoProbeSend(self, address):
-        buff = self.getTimestamp()
-        self.udpSend(buff, address)
+        while True:
+            buff = self.getTimestamp()
+            self.udpSend(buff, address)
+            time.sleep(self.probInterval)
         pass
 
     def udpSend(self, buff, address):
         self.udpSock.sendto(buff, address)
+
+
+    def udpReceiveProbe(self):
+        while True:
+            self.udpReceive()
+
 
     def udpReceive(self):
         msg, address = self.udpSock.recvfrom(1024)
@@ -60,6 +69,6 @@ if __name__ == "__main__":
     probe = udpProbe(host)
     probe.getTimestamp()
 
-    probe.udoProbeSend(("10.103.12.150", 4096))
+    probe.udoProbeSend(("10.103.12.21", 4096))
 
-    probe.udpReceive()
+    #probe.udpReceive()
