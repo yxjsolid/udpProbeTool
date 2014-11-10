@@ -38,7 +38,8 @@ class udpProbeSender(udpProbe):
         while True:
             if self.waitRspEvt.wait():
                 msg, address = self.udpReceive()
-                self.logResponse(msg)
+                if msg:
+                    self.logResponse(msg)
                # print "receive:", msg, self.utc2TimeStr(probeTm), self.utc2TimeStr(respTm), address
                 self.waitRspEvt.clear()
 
