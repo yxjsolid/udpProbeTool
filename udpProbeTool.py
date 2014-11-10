@@ -2,13 +2,19 @@ __author__ = 'xyang'
 import time, os, socket, threading
 
 class udpProbe():
-    def __init__(self, host):
+    def __init__(self, hostInfo):
+        self.host= hostInfo
         self.PORT = 4096
         self.probInterval = 5
         self.udpSocket = None
-        self.initUdpSocket(host)
         self.lastProbeTime = None
+        self.logDir = "./log"
+        self.logFd = None
         pass
+
+    def writeLog(self, log):
+        self.logFd.write(log+"\r\n")
+        self.logFd.flush()
 
     def initUdpSocket(self, host):
         pass

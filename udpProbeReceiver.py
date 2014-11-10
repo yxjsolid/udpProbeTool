@@ -12,12 +12,17 @@ class udpProbeReceiver(udpProbe):
         self.waitRspEvt = threading.Event()
         pass
 
+    def initLogFile(self):
+        if not os.path.exists(self.logDir):
+            os.mkdir(self.logDir)
+        logFileName = os.path.join(self.logDir, "probe.log")
+        self.logFd = open(logFileName, "a")
+
     def initUdpSocket(self, host):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((host, self.PORT))
         self.udpSocket = s
-
 
     def udpProbeResponse(self, receive, address):
         current = self.getCurrentTimeMsg()
