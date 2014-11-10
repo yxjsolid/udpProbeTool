@@ -27,6 +27,7 @@ class udpProbeSender(udpProbe):
         self.udpSocket = s
 
     def udpProbeSend(self, address):
+        self.waitDelay()
         while True:
             buff = self.getCurrentTimeMsg()
             #print "send:", buff, self.utc2TimeStr(buff)
@@ -45,8 +46,6 @@ class udpProbeSender(udpProbe):
 
     def udpProbeTask(self):
         address = (self.target, self.PORT)
-
-
         self.runTask(self.udpProbeSend, (address,))
         self.runTask(self.updReceiveResponse, ())
 
@@ -72,10 +71,13 @@ class udpProbeSender(udpProbe):
 
 
 if __name__ == "__main__":
-    host = "10.103.12.150"
+    host = "10.103.12.21"
 
-    target = ("10.103.12.21","laptop")
-
-    probe = udpProbeSender(host, target)
-    probe.waitDelay()
-    probe.udpProbeTask()
+    serverList = [
+        ("182.254.210.23","qcloud"),
+        ("115.29.210.164","Server_2"),
+        ("121.40.213.94","Server_3"),
+    ]
+    for target in serverList:
+        probe = udpProbeSender(host, target)
+        probe.udpProbeTask()
