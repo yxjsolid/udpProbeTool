@@ -7,6 +7,7 @@ class udpProbeReceiver(udpProbe):
         self.PORT = 4096
         self.probInterval = 5
         self.udpSocket = None
+        self.initLogFile()
         self.initUdpSocket(host)
         self.lastProbeTime = None
         self.waitRspEvt = threading.Event()
@@ -56,6 +57,8 @@ class udpProbeReceiver(udpProbe):
 
         log = "receive:%s, local:%s, diff:%s interval:%.2f"%(receiveTm, localTm, diff, interval)
         print log
+
+        self.writeLog(log)
 
 
 if __name__ == "__main__":
