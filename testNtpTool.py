@@ -17,6 +17,7 @@ def getTimeFromNtpServer(server):
         return tm1, delay
     except Exception, e:
         print "timeout"
+        return None, None
     # print
     # print "time:", tm1
     # print "spend:", time.time() - start
