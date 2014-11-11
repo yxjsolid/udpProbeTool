@@ -12,6 +12,7 @@ class udpProbeReceiver(udpProbe):
         self.lastProbeTime = None
         self.isFirst = True
         self.initClock = 0
+        self.initTime = 0
         self.revCnt = 0
         self.waitRspEvt = threading.Event()
         pass
@@ -45,6 +46,7 @@ class udpProbeReceiver(udpProbe):
     def doLog(self, msg):
         if self.isFirst is True:
             self.initClock = time.clock()
+            self.initTime = time.time()
             self.revCnt = 0
             self.isFirst = False
         else:
@@ -68,10 +70,11 @@ class udpProbeReceiver(udpProbe):
         else:
             diff = "-%.2f"%(receiveUtc - localUtc)
 
-        spend = time.clock() - self.initClock
+        spendClock = time.clock() - self.initClock
+        spendtime = time.time() - self.initTime
         real = self.revCnt * 5
 
-        log = "receive:%s, local:%s, diff:%s interval:%.2f, spend:%.2f, real:%d"%(receiveTm, localTm, diff, interval, spend, real)
+        log = "receive:%s, local:%s, diff:%s interval:%.2f, spendClock:%.2f, spendtime:%.2f, real:%d"%(receiveTm, localTm, diff, interval, spendClock, spendtime, real)
         print log
 
         self.writeLog(log)
