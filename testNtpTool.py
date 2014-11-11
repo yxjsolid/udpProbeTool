@@ -6,11 +6,15 @@ from time import ctime
 
 def getTimeFromNtpServer(server):
     start = time.time()
-    c = ntplib.NTPClient()
-    response = c.request(server, timeout = 1)
-    tm1 = response.tx_time
-    delay = time.time() - start
 
+    try :
+        c = ntplib.NTPClient()
+        response = c.request(server, timeout = 1)
+        tm1 = response.tx_time
+        delay = time.time() - start
+        print "offset:", response.offset
+    except Exception, e:
+        print "timeout"
     # print
     # print "time:", tm1
     # print "spend:", time.time() - start
@@ -25,7 +29,7 @@ if __name__ == "__main__":
     tm2 = 0
     delay2 = 0
 
-    interval = 1000
+    interval = 10
     print "interval:", interval
 
     while True:
@@ -35,4 +39,4 @@ if __name__ == "__main__":
         time.sleep(interval)
         tm2, delay2= getTimeFromNtpServer(server1)
 
-        print tm2 - tm1 - delay2
+        time.sleep(interval)
