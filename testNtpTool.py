@@ -11,8 +11,10 @@ def getTimeFromNtpServer(server):
         c = ntplib.NTPClient()
         response = c.request(server, timeout = 1)
         tm1 = response.tx_time
+        clock = time.clock()
         delay = time.time() - start
-        print "offset:", response.offset
+        print "offset:", response.offset, "clock:%.03f"%clock
+        return tm1, delay
     except Exception, e:
         print "timeout"
     # print
@@ -20,7 +22,7 @@ def getTimeFromNtpServer(server):
     # print "spend:", time.time() - start
     # print "delay:", response.delay
 
-    return tm1, delay
+
 
 
 
